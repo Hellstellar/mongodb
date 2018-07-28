@@ -1,10 +1,19 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/users_test', { useNewUrlParser: true });
+mongoose.Promise = global.Promise;
 
-mongoose.connection
-        .once('open', () => console.log('Connection was successful'))
-        .on('error', (err) => console.warn('Warning', err))
+before((done) => {
+        mongoose.connect('mongodb://localhost:27017/users_test', { useNewUrlParser: true });
+        mongoose.connection
+                .once('open', () => { 
+                        console.log('Connection was successful');
+                        done();
+                })
+                .on('error', (err) => console.warn('Warning', err))
+})
 
-beforeEach(() => {
-        mongoose.connection.collections.users.drop();
+
+beforeEach((done) => {
+        mongoose.connection.collections.users.drop(() => {
+                done();
+        });
 })
