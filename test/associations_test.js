@@ -18,10 +18,32 @@ describe('Associations', () => {
                 .then(() => done())
     })
 
-    it.only('gets blogpost from user', (done) => {
+    it('gets blogpost from user', (done) => {
         User.findOne({ name: 'joe'})
+            .populate('blogPosts')
             .then((user) => {
-                console.log(user)
+                assert(user.blogPosts[0].title === 'JavaScript')
+                done();
+            })
+    })
+
+    it('Populates all associations', (done) => {
+        User.findOne({ name: 'joe' })
+            .populate({
+                path: 'blogPosts',
+                populate: {
+                    path: 'comments',
+                    model: 'comment',
+                    populate: {
+                        path: 'user',
+                        model: 'user'
+                    }
+                }
+            })
+            .then((user) => {
+                assert(user.blogPosts[0].title = 'JavaScript')
+                assert(user.blogPosts[0].comments[0].content === 'nice blog')
+                assert(user.blogPosts[0].comments[0].user.name === 'joe')
                 done();
             })
     })
