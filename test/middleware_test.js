@@ -17,7 +17,7 @@ describe('middleware', () => {
 
     it.only('removes blogposts of deleted user', (done) => {
         joe.remove()
-            .then(() => BlogPost.count())
+            .then(() => BlogPost.countDocuments())
             .then((count) => {
                 assert(count === 0);
                 done();
